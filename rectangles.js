@@ -30,17 +30,11 @@ RectContainer.prototype.canContain = function(rect) {
 	return (this.width >= rect.width && this.height >= rect.height);
 }
 
-var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,30), new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)]
-var nofit = []
-
 
 var compareRects = function(a,b) {
 	return (b.width*b.height) - (a.width*a.height);
 }
 
-rects.sort(compareRects);
-
-var sheet = new RectContainer(400,400)
 
 RectContainer.prototype.findRect = function(rects) {
 	for (var i=0;i<rects.length;i++) {
@@ -60,8 +54,6 @@ RectContainer.prototype.findRect = function(rects) {
 	}
 }
 
-sheet.findRect(rects)
-
 
 RectContainer.prototype.printRects = function(startx=0,starty=0) {
   if (this.rect) {
@@ -76,28 +68,28 @@ RectContainer.prototype.printRects = function(startx=0,starty=0) {
 }
 
 
-//var c=document.getElementById("rectangle");
-//var ctx=c.getContext("2d");
-//
-RectContainer.prototype.drawRects = function(ctx,startx=0,starty=0) {
+RectContainer.prototype.divRects = function(startx=0,starty=0) {
 
   console.log("Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
-
+  // var retstr = "<div style='position:absolute;border-color:red;border-style:solid;border-width:3px;left:"+startx+"px;top:"+starty+"px;width:"+this.width+"px;height:"+this.height+"px;'></div>"
+  var retstr = ""
   if (this.rect) {
-	  ctx.beginPath();
-	  ctx.lineWidth="1";
-	  ctx.strokeStyle="red";
-	  ctx.rect(startx,starty,this.rect.width,this.rect.height);
-	  ctx.stroke(); 
+      retstr+="<div style='position:absolute;border-style:solid;border-width:1px;left:"+startx+"px;top:"+starty+"px;width:"+this.rect.width+"px;height:"+this.rect.height+"px;'></div>"
       if (this.top) {
-  	    this.top.drawRects(ctx,startx,this.rect.height+starty)
+        retstr+=this.top.divRects(startx,this.rect.height+starty)
      }
      if (this.right) {
-     	this.right.drawRects(ctx,this.rect.width+startx,0+starty)
+      retstr+=this.right.divRects(this.rect.width+startx,0+starty)
      }
   }
-}
 
+  return retstr;
+} 
+
+var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,30), new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)]
+rects.sort(compareRects);
+var sheet = new RectContainer(400,400)
+sheet.findRect(rects)
 sheet.printRects()
 
 //
@@ -105,25 +97,7 @@ sheet.printRects()
 rects.forEach(function(element,idx) {
   console.log("Didn't fit:"+element.width+","+element.height)
 })
-// sheet.drawRects(ctx)
 
-RectContainer.prototype.divRects = function(startx=0,starty=0) {
-
-  console.log("Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
-  // var retstr = "<div style='position:absolute;border-color:red;border-style:solid;border-width:3px;left:"+startx+"px;top:"+starty+"px;width:"+this.width+"px;height:"+this.height+"px;'></div>"
-  var retstr = ""
-  if (this.rect) {
-  	  retstr+="<div style='position:absolute;border-style:solid;border-width:1px;left:"+startx+"px;top:"+starty+"px;width:"+this.rect.width+"px;height:"+this.rect.height+"px;'></div>"
-      if (this.top) {
-  	    retstr+=this.top.divRects(startx,this.rect.height+starty)
-     }
-     if (this.right) {
-     	retstr+=this.right.divRects(this.rect.width+startx,0+starty)
-     }
-  }
-
-  return retstr;
-}	
 
 html = sheet.divRects();
 var c=document.getElementById("rectangle");
