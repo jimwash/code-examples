@@ -4,7 +4,11 @@ var Directions = {
     STANDING: 2,
 }
 
-
+// Elevator Struction
+//
+// There are 2 separate array for upstops and downstops 
+// the idea being that a person looking to go down can avoid the ride up first
+//
 var Elevator = function(name,floor,direction,min_floor,max_floor,inservice=true) {
    this.name = name;
    this.floor = floor;
@@ -20,13 +24,16 @@ var Elevator = function(name,floor,direction,min_floor,max_floor,inservice=true)
 // Process request for a particular elevator
 Elevator.prototype.addstop = function(direction,floor) {
     console.log("Given:"+direction+" : "+floor);
-    console.log("Add stop to :"+this.name+"  Direction:"+this.direction+" Floor:"+this.floor);
+
+    // If the elevator is in a standing State, it's got no where to go
+    // and can choose the direction based on the floor to go to
+    // if the floor is equal direction doesn't matter (pick one)
     if (this.direction == Directions.STANDING) {
         if (floor > this.floor) {
-          this.direction = UP;
+          this.direction = Directions.UP;
           this.upstops.push(floor);
-          this.upstops.sort();
-        } else if (floor < this.floor) {
+          this.upstops.reverse();
+        } else if (floor <= this.floor) {
           this.direction = Directions.DOWN;
           this.downstops.push(floor)
           this.downstops.sort();
@@ -36,14 +43,15 @@ Elevator.prototype.addstop = function(direction,floor) {
         this.downstops.sort();
     } else if (direction == Directions.UP) {
         this.upstops.push(floor);
-        this.upstops.sort();
+        this.upstops.reverse();
     }
    
-    console.log("Direction:"+this.direction+" up:"+this.upstops.length+" down:"+this.downstops.length);
+    console.log("Result = Direction:"+this.direction+" up:"+this.upstops.length+" down:"+this.downstops.length);
 }
 
 
 // Probably Elevator would make this determinatin itself
+// place holder
 Elevator.prototype.makestop = function(direction,floor) {
     if (direction ==Directions.DOWN) {
       this.downstops.pop()
@@ -52,6 +60,8 @@ Elevator.prototype.makestop = function(direction,floor) {
     }
 }
 
+// Start the elevator operation, controller by calling addstop
+// the addstop will be call bu am outside source (elevator bank, elevator passenger) 
 Elevator.prototype.simulate = function() {
     var waittime = 1000;
     console.log("At Start Elevator:"+this.name+" Direction:"+this.direction+" Floor:"+this.floor);
@@ -59,10 +69,18 @@ Elevator.prototype.simulate = function() {
     console.log("Upstops:"+this.upstops.length);
     if (this.direction == Directions.DOWN) {
       if (this.downstops.length > 0) {
-          this.floor--;
+          if (this.downstops[this.downstops.length-1] > this.floor) {
+            this.floor++;
+          } else {
+            this.floor--;
+          }
           if (this.downstops[this.downstops.length-1] == this.floor) {
+            console.log("STOPPED 1 -------"+this.floor)
             this.downstops.pop()
             waittime = 2000;
+          }
+          if (this.floor == this.min_floor) {
+            this.direction = Directions.UP
           }
       } else if (this.upstops.length > 0) {
         this.direction = Directions.UP;
@@ -71,10 +89,18 @@ Elevator.prototype.simulate = function() {
       }
     } else if (this.direction == Directions.UP) {
       if (this.upstops.length > 0) {
-        this.floor++;
+        if (this.upstops[this.upstops.length-1] < this.floor) {
+          this.floor--;
+        } else {
+          this.floor++;
+        }
         if (this.upstops[this.upstops.length-1] == this.floor) {
+          console.log("STOPPED 2 ------"+this.floor)
           this.upstops.pop()
           waittime = 2000;
+        }
+        if (this.floor >= this.max_floor) {
+          this.direction = Directions.DOWN
         }
       } else if (this.downstops.length > 0) {
         this.direction = Directions.DOWN;
@@ -105,6 +131,8 @@ ElevatorBank.prototype.simulate = function() {
     })
 }
 
+// Process a request to the elevator bank, this involves figuring out which 
+// elevator to add the request too
 ElevatorBank.prototype.processRequest = function (direction,floor) {
     console.log("direction:"+direction);
     console.log("floor:"+floor);
