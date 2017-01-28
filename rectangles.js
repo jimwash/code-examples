@@ -86,7 +86,9 @@ RectContainer.prototype.divRects = function(startx=0,starty=0) {
   return retstr;
 } 
 
-var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,30), new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)]
+var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,30),
+              new Rect(10,10), new Rect(10,10), /* new Rect(10,10),  new Rect(10,10), */
+              new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)]
 rects.sort(compareRects);
 var sheet = new RectContainer(400,400)
 sheet.findRect(rects)
