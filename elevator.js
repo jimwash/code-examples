@@ -2,7 +2,7 @@ var Directions = {
     UP: 0,
     DOWN: 1,
     STANDING: 2,
-}
+};
 
 // Elevator Struction
 //
@@ -12,13 +12,13 @@ var Directions = {
 var Elevator = function(name,floor,direction,min_floor,max_floor,inservice=true) {
    this.name = name;
    this.floor = floor;
-   this.direction = direction
-   this.inservice = inservice
-   this.min_floor = min_floor
-   this.max_floor = max_floor
-   this.downstops = []
-   this.upstops = []
-}
+   this.direction = direction;
+   this.inservice = inservice;
+   this.min_floor = min_floor;
+   this.max_floor = max_floor;
+   this.downstops = [];
+   this.upstops = [];
+};
 
 
 // Process request for a particular elevator
@@ -35,11 +35,11 @@ Elevator.prototype.addstop = function(direction,floor) {
           this.upstops.reverse();
         } else if (floor <= this.floor) {
           this.direction = Directions.DOWN;
-          this.downstops.push(floor)
+          this.downstops.push(floor);
           this.downstops.sort();
         }
     } else if (direction == Directions.DOWN) {
-        this.downstops.push(floor)
+        this.downstops.push(floor);
         this.downstops.sort();
     } else if (direction == Directions.UP) {
         this.upstops.push(floor);
@@ -47,18 +47,18 @@ Elevator.prototype.addstop = function(direction,floor) {
     }
    
     console.log("Result = Direction:"+this.direction+" up:"+this.upstops.length+" down:"+this.downstops.length);
-}
+};
 
 
 // Probably Elevator would make this determinatin itself
 // place holder
 Elevator.prototype.makestop = function(direction,floor) {
     if (direction ==Directions.DOWN) {
-      this.downstops.pop()
+      this.downstops.pop();
     } else if (direction == Directions.UP) {
-      this.upstops.pop()
+      this.upstops.pop();
     }
-}
+};
 
 // Start the elevator operation, controller by calling addstop
 // the addstop will be call bu am outside source (elevator bank, elevator passenger) 
@@ -75,12 +75,12 @@ Elevator.prototype.simulate = function() {
             this.floor--;
           }
           if (this.downstops[this.downstops.length-1] == this.floor) {
-            console.log("STOPPED 1 -------"+this.floor)
-            this.downstops.pop()
+            console.log("STOPPED 1 -------"+this.floor);
+            this.downstops.pop();
             waittime = 2000;
           }
           if (this.floor == this.min_floor) {
-            this.direction = Directions.UP
+            this.direction = Directions.UP;
           }
       } else if (this.upstops.length > 0) {
         this.direction = Directions.UP;
@@ -95,12 +95,12 @@ Elevator.prototype.simulate = function() {
           this.floor++;
         }
         if (this.upstops[this.upstops.length-1] == this.floor) {
-          console.log("STOPPED 2 ------"+this.floor)
-          this.upstops.pop()
+          console.log("STOPPED 2 ------"+this.floor);
+          this.upstops.pop();
           waittime = 2000;
         }
         if (this.floor >= this.max_floor) {
-          this.direction = Directions.DOWN
+          this.direction = Directions.DOWN;
         }
       } else if (this.downstops.length > 0) {
         this.direction = Directions.DOWN;
@@ -117,19 +117,19 @@ Elevator.prototype.simulate = function() {
 
     console.log("Elevator:"+this.name+" Direction:"+this.direction+" Floor:"+this.floor);
     var self = this;
-    setTimeout(function(){self.simulate()},waittime);
-}
+    setTimeout(function(){self.simulate();},waittime);
+};
 
 // Bank of Elevators, make it a class like thing to add operations on it
 // Maybe have it report out of service elevators
 
-function ElevatorBank() {};
-ElevatorBank.prototype = new Array;
+function ElevatorBank() {}
+ElevatorBank.prototype = Object.create(Array.prototype);
 ElevatorBank.prototype.simulate = function() {
     this.forEach(function(elevator,index) {
       elevator.simulate();
-    })
-}
+    });
+};
 
 // Process a request to the elevator bank, this involves figuring out which 
 // elevator to add the request too
@@ -141,12 +141,12 @@ ElevatorBank.prototype.processRequest = function (direction,floor) {
     var self = this;
     this.forEach(function(elevator,index) {
         if (elevator.min_floor > floor || elevator.max_floor < floor) {
-           console.log("OUT OF RANGE")
+           console.log("OUT OF RANGE");
            return;
         }
 
         if (!elevator.inservice) {
-           console.log("OUT OF SERVICE")
+           console.log("OUT OF SERVICE");
            return;
         }
         var onTheWay = (
@@ -166,9 +166,9 @@ ElevatorBank.prototype.processRequest = function (direction,floor) {
         }
     
         if (distance<Math.abs(floor-self[closestindex].floor)) {
-          closestindex = index
+          closestindex = index;
         }
-    })
+    });
 
     console.log("closestindex:"+closestindex); 
     console.log("chosenindex:"+chosenindex); 
@@ -178,8 +178,8 @@ ElevatorBank.prototype.processRequest = function (direction,floor) {
     this[elevatorindex].addstop(direction,floor);
 
     return elevatorindex;
-}
+};
 
-module.exports.Elevator = Elevator
-module.exports.ElevatorBank = ElevatorBank
-module.exports.Directions = Directions
+module.exports.Elevator = Elevator;
+module.exports.ElevatorBank = ElevatorBank;
+module.exports.Directions = Directions;
