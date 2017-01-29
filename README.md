@@ -14,3 +14,8 @@ iife
 elevator
 
     object oriented elevator, with simulator
+
+
+workstations
+
+    greeting card manufacturing
