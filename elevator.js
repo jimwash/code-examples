@@ -9,7 +9,7 @@ var Directions = {
 // There are 2 separate array for upstops and downstops 
 // the idea being that a person looking to go down can avoid the ride up first
 //
-var Elevator = function(name,floor,direction,min_floor,max_floor,inservice=true) {
+var Elevator = function (name, floor, direction, min_floor, max_floor, inservice=true) {
    this.name = name;
    this.floor = floor;
    this.direction = direction;
@@ -137,7 +137,7 @@ ElevatorBank.prototype.processRequest = function (direction,floor) {
     console.log("direction:"+direction);
     console.log("floor:"+floor);
     var chosenindex = -1;
-    var closestindex = Math.floor(Math.random() * elevatorbank.length);
+    var closestindex = Math.floor(Math.random() * this.length);
     var self = this;
     this.forEach(function(elevator,index) {
         if (elevator.min_floor > floor || elevator.max_floor < floor) {
@@ -173,7 +173,7 @@ ElevatorBank.prototype.processRequest = function (direction,floor) {
     console.log("closestindex:"+closestindex); 
     console.log("chosenindex:"+chosenindex); 
 
-    elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
+    var elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
 
     this[elevatorindex].addstop(direction,floor);
 
