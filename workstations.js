@@ -83,18 +83,16 @@ var WorkStation = function(typetask, name, ticks) {
     this.active = false;
 };
 
-WorkStation.prototype.process = function(id, cb) {
+WorkStation.prototype.process = function(cardid) {
     // reflect it's state
     this.active = true;
-    console.log("Start Type:"+this.type+":"+id+":"+this.ticks);
+    console.log("Start Type:"+this.type+":"+cardid+":"+this.ticks);
 
     var self = this;
-
-    // simulate the time it would take to handle the work
-    setTimeout(function() {
-      self.active = false;
-      cb(id);
-    }, this.ticks);
+    return new Promise(function(resolve, reject) {
+        // A mock async action using setTimeout
+        setTimeout(function() { self.active = false; resolve(); }, self.ticks);
+    });
 };
 
 
@@ -151,7 +149,8 @@ Stations.prototype.assignCards = function() {
          if (elem.active === false) {
             if (self.cardqueue.length > 0) {
                 console.log("PROCESS:"+elem.type+": Card:"+self.cardqueue[0]);
-                elem.process(self.cardqueue[0],self.cardComplete.bind(self));
+                var cardid = self.cardqueue[0];
+                elem.process(cardid).then(function() { self.cardComplete(cardid) } );
                 self.cardqueue.splice(0,1);
             }
          }
@@ -213,17 +212,21 @@ StationsControl.prototype.addOrder = function(order) {
 
 
 
+// Test Data
 var orderrows =[ new OrderRow(200,100,5), 
               new OrderRow(210,75,8),
               new OrderRow(220, 150,1)];
 
-
+// Test Data for debugging
 var orderrows1 =[ new OrderRow(200,1,5), 
               new OrderRow(210,5,8),
               new OrderRow(220, 6,1)];
 
+// Create the order
 var order = new Order(1,orderrows1);
 
+// Setup the stations
 var stationcontroller = new StationsControl();
 
+// Add the order to the stations
 stationcontroller.addOrder(order);

@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var Directions = {
     UP: 0,
     DOWN: 1,

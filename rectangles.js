@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 // order rectangles by size
 var RectContainer = function(width,height) {
     this.width = width;
