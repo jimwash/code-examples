@@ -72,8 +72,8 @@ RectContainer.prototype.printRects = function(startx=0,starty=0) {
 RectContainer.prototype.divRects = function(startx=0,starty=0) {
 
   console.log("Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
-  // var retstr = "<div style='position:absolute;border-color:red;border-style:solid;border-width:3px;left:"+startx+"px;top:"+starty+"px;width:"+this.width+"px;height:"+this.height+"px;'></div>"
-  var retstr = "";
+  var retstr = "<div style='display:none;position:absolute;border-color:red;border-style:solid;border-width:3px;left:"+startx+"px;top:"+starty+"px;width:"+this.width+"px;height:"+this.height+"px;'></div>"
+  // var retstr = "";
   if (this.rect) {
       retstr+="<div style='position:absolute;border-style:solid;border-width:1px;left:"+startx+"px;top:"+starty+"px;width:"+this.rect.width+"px;height:"+this.rect.height+"px;'></div>";
       if (this.top) {
@@ -88,7 +88,16 @@ RectContainer.prototype.divRects = function(startx=0,starty=0) {
 };
 
 var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,30),
-              new Rect(10,10), new Rect(10,10), /* new Rect(10,10),  new Rect(10,10), */
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
+              new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
               new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)];
 
 rects.sort(compareRects);
