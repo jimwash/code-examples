@@ -1,6 +1,10 @@
+//
+// Represents a row on a keyboard
 function KeyboardRow() {
 };
 KeyboardRow.prototype = new Array;
+
+// Can this string be typed using just this row
 KeyboardRow.prototype.cantype = function(str) {
 	var chars = str.toLowerCase().split('');
     var self = this;
@@ -10,6 +14,8 @@ KeyboardRow.prototype.cantype = function(str) {
 	return notid.length == 0;
 
 }
+
+// Construct the keyboard rows
 var row1 = new KeyboardRow();
 row1.push('q','w','e','r','t','y','u','i','o','p')
 
