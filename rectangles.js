@@ -69,18 +69,29 @@ RectContainer.prototype.printRects = function(startx=0,starty=0) {
 };
 
 
-RectContainer.prototype.divRects = function(startx=0,starty=0) {
+RectContainer.prototype.divRects = function(svg,startx=0,starty=0) {
 
   console.log("Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
-  var retstr = "<div style='display:none;position:absolute;border-color:red;border-style:solid;border-width:3px;left:"+startx+"px;top:"+starty+"px;width:"+this.width+"px;height:"+this.height+"px;'></div>"
-  // var retstr = "";
+  var retstr = "";
+
   if (this.rect) {
-      retstr+="<div style='position:absolute;border-style:solid;border-width:1px;left:"+startx+"px;top:"+starty+"px;width:"+this.rect.width+"px;height:"+this.rect.height+"px;'></div>";
+      // retstr+="<div style='position:absolute;border-style:solid;border-width:1px;left:"+startx+"px;top:"+starty+"px;width:"+this.rect.width+"px;height:"+this.rect.height+"px;'></div>";
+
+      /* Example to display Text using D3.js */
+      svg.append("rect")
+      .style('fill','none')
+      .style('stroke','black')
+      .style('stroke-width','1px')
+      .attr("x", startx+"px")
+      .attr("y", starty+"px")
+      .attr("width",this.width+"px")
+      .attr("height",this.height+"px")
+
       if (this.top) {
-        retstr+=this.top.divRects(startx,this.rect.height+starty);
+        retstr+=this.top.divRects(svg,startx,this.rect.height+starty);
      }
      if (this.right) {
-      retstr+=this.right.divRects(this.rect.width+startx,0+starty);
+      retstr+=this.right.divRects(svg,this.rect.width+startx,0+starty);
      }
   }
 
@@ -111,6 +122,9 @@ rects.forEach(function(element,idx) {
   console.log("Didn't fit:"+element.width+","+element.height);
 });
 
-html = sheet.divRects();
-var c=document.getElementById("rectangle");
-c.innerHTML = html;
+var svg = d3.select("#rectangle")
+.append("svg")
+.attr("width", "100%")
+.attr("height", "100%")
+
+sheet.divRects(svg); 
