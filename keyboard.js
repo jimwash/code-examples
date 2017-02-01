@@ -7,7 +7,7 @@ KeyboardRow.prototype = new Array;
 // Can this string be typed using just this row
 KeyboardRow.prototype.cantype = function(str) {
 	var chars = str.toLowerCase().split('');
-    var self = this;
+  var self = this;
 	var notid = chars.filter( function( el ) {
 	  return self.indexOf( el ) < 0;
 	});

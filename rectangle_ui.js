@@ -13,6 +13,10 @@ app.get('/', function (req, res) {
   res.sendFile('index.html');
 });
 
+app.get('/promise', function (req, res) {
+  res.sendFile(__dirname+'/index2.html');
+});
+
 app.listen(3000, function () {
   console.log('Example rectangle listening on port 3000!');
 });
