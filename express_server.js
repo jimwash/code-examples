@@ -4,8 +4,6 @@ var app = express();
 app.set('views',".");
 app.set('view engine', 'jade');
 
-var path    = require("path");
-
 app.use(express.static(__dirname + '/'));
 app.use(express.static(__dirname + '/node_modules'));
 

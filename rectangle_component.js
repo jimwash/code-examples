@@ -43,7 +43,7 @@ define([
   // if size is same then use height to break tie (forces more consistency between browsers)
   var compareRects = function(a,b) {
     var cmp = (b.width*b.height) - (a.width*a.height);
-    if (cmp == 0) {
+    if (cmp === 0) {
       return b.height - a.height;
     }
 
@@ -131,12 +131,12 @@ define([
   RectContainer.prototype.makeRects = function(rs) {
         var retval = [];
         for (var i=0;i<rs.length;i++) {
-          retval.push(new Rect(rs[i].w,rs[i].h))
+          retval.push(new Rect(rs[i].w,rs[i].h));
         }
         retval.sort(compareRects);
 
         return retval;
-  }
+  };
 
   return RectContainer;
 });
