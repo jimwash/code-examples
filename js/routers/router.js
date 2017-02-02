@@ -4,7 +4,7 @@ define([
 	'backbone',
 	'collections/rectangles',
 	'common'
-], function ($, Backbone, Todos, Common) {
+], function ($, Backbone, Rectangle, Common) {
 	'use strict';
 
 	var RectangleRouter = Backbone.Router.extend({

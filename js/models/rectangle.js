@@ -6,8 +6,7 @@ define([
 	'use strict';
 
 	var Rectangle = Backbone.Model.extend({
-		// Default attributes for the todo
-		// and ensure that each todo created has `title` and `completed` keys.
+		// Default attributes for the rectangle
 		defaults: {
 			title: ''
 		},

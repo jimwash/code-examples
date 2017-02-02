@@ -2,12 +2,8 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'collections/rectangles',
-  'views/rectangles',
-  'text!templates/stats.html',
-  'common',
   'd3'
-], function ($, _, Backbone, Todos, TodoView, statsTemplate, Common, D3) {
+], function ($, _, Backbone, D3) {
 // Container for rectangles
 var RectContainer = function(width,height) {
     this.width = width;
