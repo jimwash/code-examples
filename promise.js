@@ -1,11 +1,4 @@
-var x = "123";;
-console.log(x);
-console.log($.find("#rectangle"))
-var a = $.get("../index.html")
-var b = $.get("../index2.html")
-//$.when.apply($,[a,b]).then(function(d) {
-//	console.log(d);
-//})
+
 
 var DD = function() {
 
@@ -47,6 +40,8 @@ var t = [];
 t[2] = 4;
 console.log("T:"+t.length);
 
+var a = $.get("../index.html")
+var b = $.get("../index2.html")
 
 var x = new DD();
 x.whenzer(a,b).then(function(dx) {

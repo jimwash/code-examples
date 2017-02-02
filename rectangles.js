@@ -94,7 +94,7 @@ RectContainer.prototype.drawRects = function(svg,startx,starty) {
   if (typeof(starty) === 'undefined') {
     starty = 0;
   } 
-  console.log("Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
+  console.log("Draw Location:"+startx+","+starty+"  Size:"+this.width+","+this.height);
   var retstr = "";
 
   if (this.rect) {
@@ -105,8 +105,8 @@ RectContainer.prototype.drawRects = function(svg,startx,starty) {
       .style('stroke-width','1px')
       .attr("x", startx+"px")
       .attr("y", starty+"px")
-      .attr("width",this.width+"px")
-      .attr("height",this.height+"px");
+      .attr("width",this.rect.width+"px")
+      .attr("height",this.rect.height+"px");
 
       if (this.top) {
         retstr+=this.top.drawRects(svg,startx,this.rect.height+starty);
@@ -133,6 +133,8 @@ var rects = [ new Rect(200,300), new Rect(50,10), new Rect(20,60), new Rect(80,3
               new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
               new Rect(10,10), new Rect(10,10), new Rect(10,10),  new Rect(10,10),
               new Rect(100,200), new Rect(200,200), new Rect(200,100), new Rect(100,120)];
+
+var rects1 = [ new Rect(100,100), new Rect(10,10), new Rect(200,200), new Rect(10,10)] ;             
 
 rects.sort(compareRects);
 
