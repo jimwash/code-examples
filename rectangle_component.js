@@ -1,9 +1,8 @@
 define([
   'jquery',
   'underscore',
-  'backbone',
-  'd3'
-], function ($, _, Backbone, D3) {
+  'backbone'
+], function ($, _, Backbone) {
 // Container for rectangles
   var RectContainer = function(width,height) {
       this.width = width;
@@ -28,7 +27,6 @@ define([
   RectContainer.prototype.addRect = function(width,height) {
       this.rect = new Rect(width,height);
       console.log("add rect:"+width+","+height);
-      // this.top =  new RectContainer(this.width,this.height-height)
       this.top =  new RectContainer(width,this.height-height);
       console.log("top:"+this.top.width+","+this.top.height);
       this.right = new RectContainer(this.width-width,this.height);
