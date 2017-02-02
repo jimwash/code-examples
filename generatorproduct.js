@@ -72,7 +72,7 @@ OrderHistory.prototype.generators = function() {
     // the largest generator will be the first on the list
     var vals = [];
 	for (var productid in generatorvals) {
-	    item = {};
+	    var item = {};
 	    item.productid = productid;
 	    item.total = generatorvals[productid];
 	    vals.push(item);
@@ -101,6 +101,6 @@ var orderitems2 = new Order([new OrderItem(1,1,40),new OrderItem(3,1,30), new Or
 orders.addOrder(orderitems1);
 orders.addOrder(orderitems2);
 
-gens = orders.generators();
+var gens = orders.generators();
 
 console.log("Top Generator   id:"+gens[0].productid+"  total generated:"+gens[0].total);
