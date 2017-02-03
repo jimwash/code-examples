@@ -7,9 +7,10 @@ define([
 	'views/rectangles',
 	'text!templates/stats.html',
 	'common',
-	'rectangle_component',
+	'rect_component',
+	'rectanglecontainer_component',
 	'd3'
-], function ($, _, Backbone, Rectangles, RectangleView, statsTemplate, Common, RectContainer, d3) {
+], function ($, _, Backbone, Rectangles, RectangleView, statsTemplate, Common, Rect, RectContainer, d3) {
 	'use strict';
 
 	// Our overall **AppView** is the top-level piece of UI.
@@ -106,22 +107,20 @@ define([
 
 
 		draw: function() {
-            console.log("GOT DRAW:"+RectContainer)
             var sheet = new RectContainer(400,400);
 
             var rects = []
 			Rectangles.each(function (todo) {
               var rect = todo.get('title');
               var vals = rect.split(',')
-              rects.push({w:parseInt(vals[0]),h:parseInt(vals[1])})
+              var rect = new Rect(parseInt(vals[0]),parseInt(vals[1]));
+              rects.push(rect);
 			});
+            rects.sort(sheet.compareRects);
 
-
-            var rs = sheet.makeRects(rects);
-            // console.log("RS:"+rs);
-            sheet.findRect(rs);
+            sheet.findRect(rects);
             sheet.printRects();
-			// Using d3 draw the rectangles and their positions
+
 			$("#rectangles").empty();
 
 			var svg = d3.select("#rectangles")

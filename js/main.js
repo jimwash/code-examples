@@ -16,6 +16,11 @@ require.config({
 			],
 			exports: 'Backbone'
 		},
+		rectanglecontainer_component: {
+			deps: [ 
+			    'rect_component'
+			]
+		},
 		backboneLocalstorage: {
 			deps: ['backbone'],
 			exports: 'Store'
@@ -27,7 +32,8 @@ require.config({
 		backbone: '../node_modules/backbone/backbone',
 		backboneLocalstorage: '../node_modules/backbone.localstorage/backbone.localStorage',
 		text: '../node_modules/requirejs-text/text',
-		rectangle_component: '../rectangle_component',
+		rect_component: '../rect_component',
+		rectanglecontainer_component: '../rectanglecontainer_component',
 		d3: '../d3'
 	}
 });

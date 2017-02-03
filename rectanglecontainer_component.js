@@ -1,8 +1,9 @@
 define([
   'jquery',
   'underscore',
-  'backbone'
-], function ($, _, Backbone) {
+  'backbone',
+  'rect_component'
+], function ($, _, Backbone, Rect) {
 // Container for rectangles
   var RectContainer = function(width,height) {
       this.width = width;
@@ -14,12 +15,6 @@ define([
       this.top = null;
 
       this.rect = null;
-  };
-
-  // Rectangle 
-  var Rect = function(width,height) {
-  	this.width = width;
-  	this.height = height;
   };
 
   // Add a rectangle to the container
@@ -35,12 +30,15 @@ define([
 
   // Can the rectangle be contained within the given container
   RectContainer.prototype.canContain = function(rect) {
+    console.log("rect w:"+rect.width);
+    console.log("rect h:"+rect.height);
   	return (this.width >= rect.width && this.height >= rect.height);
   };
 
 
   // Compare rects to order the larger rects first
   // if size is same then use height to break tie (forces more consistency between browsers)
+  /*
   var compareRects = function(a,b) {
     var cmp = (b.width*b.height) - (a.width*a.height);
     if (cmp === 0) {
@@ -49,13 +47,16 @@ define([
 
     return cmp;
   };
+  */
 
   // Find the next largest rectangle that this container can hold
   // add it and find the next largest rectangle it's remaining space can hold
   // continue until it can't hold any more
   RectContainer.prototype.findRect = function(rects) {
+    console.log('r:'+rects.length)
   	for (var i=0;i<rects.length;i++) {
   		if (this.canContain(rects[i])) {
+        console.log('addrect:'+i)
   			this.addRect(rects[i].width,rects[i].height);
   			rects.splice(i,1);
   			break;
@@ -133,10 +134,20 @@ define([
         for (var i=0;i<rs.length;i++) {
           retval.push(new Rect(rs[i].w,rs[i].h));
         }
-        retval.sort(compareRects);
+        retval.sort(this.compareRects);
 
         return retval;
   };
+
+  RectContainer.prototype.compareRects = function(a,b) {
+    var cmp = (b.width*b.height) - (a.width*a.height);
+    if (cmp === 0) {
+      return b.height - a.height;
+    }
+
+    return cmp;
+  };
+
 
   return RectContainer;
 });
