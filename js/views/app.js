@@ -55,14 +55,8 @@ define([
 				this.$footer.show();
 
 				this.$footer.html(this.template({
-					// completed:6,
 					remaining:Rectangles.length
 				}));
-
-				this.$('#filters li a')
-					.removeClass('selected')
-					.filter('[href="#/' + (Common.TodoFilter || '') + '"]')
-					.addClass('selected');
 			} else {
 				this.$main.hide();
 				this.$footer.hide();
