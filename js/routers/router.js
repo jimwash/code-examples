@@ -1,10 +1,7 @@
 /*global define*/
 define([
-	'jquery',
-	'backbone',
-	'collections/rectangles',
-	'common'
-], function ($, Backbone, Rectangle, Common) {
+	'backbone'
+], function (Backbone) {
 	'use strict';
 
 	var RectangleRouter = Backbone.Router.extend({

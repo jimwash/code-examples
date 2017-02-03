@@ -1,10 +1,9 @@
 /*global define */
 define([
-	'underscore',
 	'backbone',
 	'backboneLocalstorage',
 	'models/rectangle'
-], function (_, Backbone, Store, Rectangle) {
+], function (Backbone, Store, Rectangle) {
 	'use strict';
 
 	var RectanglesCollection = Backbone.Collection.extend({
