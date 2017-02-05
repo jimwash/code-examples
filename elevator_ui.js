@@ -1,7 +1,7 @@
 
 elevatorbank = new ElevatorBank;
 
-elevatorbank.push(new Elevator("L1",0,Directions.STANDING,0,20))
+elevatorbank.push(new Elevator("L1",0,Directions.STANDING,10,20))
 elevatorbank.push(new Elevator("L2",0,Directions.STANDING,10,20))
 elevatorbank.push(new Elevator("R1",0,Directions.STANDING,10,20))
 elevatorbank.push(new Elevator("R2",0,Directions.STANDING,0,20))

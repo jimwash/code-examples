@@ -201,6 +201,16 @@ ElevatorBank.prototype.processRequest = function(direction, floor) {
 
 	for (var i=0;i<this.length;i++) {
 		// Number of stops ?
+		if (this[i].min_floor > floor || this[i].max_floor < floor) {
+			console.log("OUT OF RANGE");
+			continue;
+		}
+
+		if (!this[i].inservice) {
+			console.log("OUT OF SERVICE");
+			continue;
+		}
+
         var sz = 0;
 
         // Distance between this floor and other stops (worse case)
