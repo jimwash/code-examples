@@ -6,6 +6,9 @@ var Directions = {
 	STANDING : 2,
 };
 
+var STOPPEDTIME = 2000;  // simulate waiting when stopped
+var MOVINGTIME = 1000;   // simulate time to get to next floor
+
 // Elevator Struction
 //
 // There are 2 separate array for upstops and downstops
@@ -21,13 +24,12 @@ var Elevator = function (name, floor, direction, min_floor, max_floor, inservice
 	this.downstops = [];
 	this.upstops = [];
 
+    // create the shaft the elevator will be in
     var elev = $("#elevators");
     this.div = "<div class='shaft' id='"+this.name+"'><div>";
     elev.append(this.div);
     
-    var height = $("#elevators").height();
-    var space = height/max_floor;
-
+    // add a drawing area to the shaft
 	var svg = d3.select("#"+this.name)
 	.append("svg")
 	.attr("width", "100%")
@@ -36,15 +38,16 @@ var Elevator = function (name, floor, direction, min_floor, max_floor, inservice
     this.svg = svg;
     this.stopped = false;
     this.draw();
-
 };
 
+// Draw the elevator
+// Display witha fill if it stops
 Elevator.prototype.draw = function() {
 	 var shaftheight = $("#elevators").height();
      var height = shaftheight / this.max_floor;
      this.svg.selectAll("*").remove();
      var drawfloor = this.floor;
-     if (drawfloor == 0) {
+     if (drawfloor === 0) {
      	drawfloor = 1;
      }
      var y = shaftheight - (height*drawfloor);
@@ -66,7 +69,6 @@ Elevator.prototype.draw = function() {
 
 // Process request for a particular elevator
 Elevator.prototype.addstop = function(direction, floor) {
-	console.log("Given:" + direction + " : " + floor);
 
 	// If the elevator is in a standing State, it's got no where to go
 	// and can choose the direction based on the floor to go to
@@ -102,11 +104,17 @@ Elevator.prototype.makestop = function(direction, floor) {
 	}
 };
 
+
 // Start the elevator operation, controller by calling addstop
 // the addstop will be call bu am outside source (elevator bank, elevator passenger)
 Elevator.prototype.simulate = function() {
-	var waittime = 1000;
+
+	var waittime = MOVINGTIME;
 	this.stopped = false;
+
+    // Go to next stop following current direction
+    // If there are no stops in that direction then
+    // switch direction if there are stops in the other direction
 	if (this.direction == Directions.DOWN) {
 		if (this.downstops.length > 0) {
 			if (this.downstops[this.downstops.length - 1] > this.floor) {
@@ -117,7 +125,7 @@ Elevator.prototype.simulate = function() {
 			if (this.downstops[this.downstops.length - 1] == this.floor) {
 				this.downstops.pop();
 				this.stopped = true;
-				waittime = 2000;
+				waittime = STOPPEDTIME;
 			}
 			if (this.floor == this.min_floor) {
 				this.direction = Directions.UP;
@@ -136,7 +144,7 @@ Elevator.prototype.simulate = function() {
 			}
 			if (this.upstops[this.upstops.length - 1] == this.floor) {
 				this.upstops.pop();
-				waittime = 2000;
+				waittime = STOPPEDTIME;
 				this.stopped = true;
 			}
 			if (this.floor >= this.max_floor) {
@@ -155,9 +163,11 @@ Elevator.prototype.simulate = function() {
 		}
 	}
 
-	// console.log("Elevator:" + this.name + " Direction:" + this.direction + " Floor:" + this.floor);
 	var self = this;
 	this.draw();
+	if (this.stopped) {
+		console.log("STOPPED AT:"+this.floor);
+	}
 
 	setTimeout(function() {
 		self.simulate();
@@ -166,7 +176,6 @@ Elevator.prototype.simulate = function() {
 
 // Bank of Elevators, make it a class like thing to add operations on it
 // Maybe have it report out of service elevators
-
 function ElevatorBank() {
 }
 
@@ -177,13 +186,41 @@ ElevatorBank.prototype.simulate = function() {
 	});
 };
 
+
 // Process a request to the elevator bank, this involves figuring out which
 // elevator to add the request too
 ElevatorBank.prototype.processRequest = function(direction, floor) {
-	console.log("direction:" + direction);
-	console.log("floor:" + floor);
+
+	console.log("Request: drection:"+direction+"  floor:"+floor);
+
 	var chosenindex = -1;
-	var closestindex = Math.floor(Math.random() * this.length);
+
+    // default to the one with the smallest queue
+	var smallest = null;
+	var smallestidx = 0;
+
+	for (var i=0;i<this.length;i++) {
+		// Number of stops ?
+        var sz = 0;
+
+        // Distance between this floor and other stops (worse case)
+        if (this[i].downstops.length > 0) {
+        	sz+=Math.abs(this[i].downstops[this[i].downstops.length-1] - floor);
+        }
+        if (this[i].upstops.length > 0) {
+            sz+=Math.abs(this[i].upstops[this[i].upstops.length-1] - floor);
+        }
+
+        console.log("I:"+i+" depth:"+sz+" smallest:"+smallest);
+
+        if (smallest === null || sz < smallest) {
+        	smallest = sz;
+        	smallestidx = i;
+        }
+	}
+
+	var closestindex = smallestidx;
+
 	var self = this;
 	this.forEach(function(elevator, index) {
 		if (elevator.min_floor > floor || elevator.max_floor < floor) {
@@ -196,37 +233,29 @@ ElevatorBank.prototype.processRequest = function(direction, floor) {
 			return;
 		}
 
-        if (elevator.upstops.length === 0 && elevator.downstops.length === 0) {
-        	elevator.direction = Directions.STANDING;
-        }
-
-		var onTheWay = ((elevator.direction === Directions.UP && elevator.floor < floor) || (elevator.direction === Directions.DOWN && elevator.floor > floor) || elevator.direction === Directions.STANDING );
-
-		var sameDirection = direction === elevator.direction || elevator.direction === Directions.STANDING;
+// 		var onTheWay = ((elevator.direction === Directions.UP && elevator.floor < floor) || (elevator.direction === Directions.DOWN && elevator.floor > floor) || elevator.direction === Directions.STANDING );
 
 		var distance = Math.abs(floor - elevator.floor);
 
+		var furthestfloor;
 
-		var closfloor;
 		if (self[closestindex.direction] == Directions.UP)  {
 		  var up = self[closestindex].upstops;
-          closfloor = up[up.length=1];
-          closfloor = up[0]
+          furthestfloor = up[0];
 		} else {
 		  var down = self[closestindex].downstops;
-		  closfloor = down[down.length-1];
-		  closfloor = down[0]
+		  furthestfloor = down[0];
 		}
 
 /*
-		if (false && onTheWay && sameDirection && (chosenindex === -1 || distance < Math.abs(floor - self[chosenindex].floor))) {
+		if (onTheWay && (chosenindex === -1 || distance < Math.abs(floor - self[chosenindex].floor))) {
 			chosenindex = index;
-		// } else  if (distance < Math.abs(floor - self[closestindex].floor)) {
-		} else  if (distance < Math.abs(floor - closfloor)) {
+		} else  if (onTheWay && distance < Math.abs(floor - self[closestindex].floor)) {
 			closestindex = index;
 		}
 */
-		if (distance < Math.abs(floor - closfloor)) {
+
+		if (distance < Math.abs(floor - furthestfloor)) {
 			closestindex = index;
 		}
 	});
@@ -234,7 +263,7 @@ ElevatorBank.prototype.processRequest = function(direction, floor) {
 	console.log("closestindex:" + closestindex);
 	console.log("chosenindex:" + chosenindex);
 
-	// var elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
+    // var elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
 	var elevatorindex = closestindex;
 
 	this[elevatorindex].addstop(direction, floor);
