@@ -20,6 +20,48 @@ var Elevator = function (name, floor, direction, min_floor, max_floor, inservice
 	this.max_floor = max_floor;
 	this.downstops = [];
 	this.upstops = [];
+
+    var elev = $("#elevators");
+    this.div = "<div class='shaft' id='"+this.name+"'><div>";
+    elev.append(this.div);
+    
+    var height = $("#elevators").height();
+    var space = height/max_floor;
+
+	var svg = d3.select("#"+this.name)
+	.append("svg")
+	.attr("width", "100%")
+	.attr("height", "100%");
+
+    this.svg = svg;
+    this.stopped = false;
+    this.draw();
+
+};
+
+Elevator.prototype.draw = function() {
+	 var shaftheight = $("#elevators").height();
+     var height = shaftheight / this.max_floor;
+     this.svg.selectAll("*").remove();
+     var drawfloor = this.floor;
+     if (drawfloor == 0) {
+     	drawfloor = 1;
+     }
+     var y = shaftheight - (height*drawfloor);
+
+     var fill = 'none';
+     if (this.stopped) {
+     	fill = 'green';
+     }
+
+     this.svg.append("rect")
+      .style('fill',fill)
+      .style('stroke','black')
+      .style('stroke-width','1px')
+      .attr("x", 0+"px")
+      .attr("y", y+"px")
+      .attr("width","100%")
+      .attr("height",height+"px");
 };
 
 // Process request for a particular elevator
@@ -64,9 +106,7 @@ Elevator.prototype.makestop = function(direction, floor) {
 // the addstop will be call bu am outside source (elevator bank, elevator passenger)
 Elevator.prototype.simulate = function() {
 	var waittime = 1000;
-	console.log("At Start Elevator:" + this.name + " Direction:" + this.direction + " Floor:" + this.floor);
-	console.log("Downstops:" + this.downstops.length);
-	console.log("Upstops:" + this.upstops.length);
+	this.stopped = false;
 	if (this.direction == Directions.DOWN) {
 		if (this.downstops.length > 0) {
 			if (this.downstops[this.downstops.length - 1] > this.floor) {
@@ -75,8 +115,8 @@ Elevator.prototype.simulate = function() {
 				this.floor--;
 			}
 			if (this.downstops[this.downstops.length - 1] == this.floor) {
-				console.log("STOPPED 1 -------" + this.floor);
 				this.downstops.pop();
+				this.stopped = true;
 				waittime = 2000;
 			}
 			if (this.floor == this.min_floor) {
@@ -95,9 +135,9 @@ Elevator.prototype.simulate = function() {
 				this.floor++;
 			}
 			if (this.upstops[this.upstops.length - 1] == this.floor) {
-				console.log("STOPPED 2 ------" + this.floor);
 				this.upstops.pop();
 				waittime = 2000;
+				this.stopped = true;
 			}
 			if (this.floor >= this.max_floor) {
 				this.direction = Directions.DOWN;
@@ -115,8 +155,10 @@ Elevator.prototype.simulate = function() {
 		}
 	}
 
-	console.log("Elevator:" + this.name + " Direction:" + this.direction + " Floor:" + this.floor);
+	// console.log("Elevator:" + this.name + " Direction:" + this.direction + " Floor:" + this.floor);
 	var self = this;
+	this.draw();
+
 	setTimeout(function() {
 		self.simulate();
 	}, waittime);
@@ -153,17 +195,38 @@ ElevatorBank.prototype.processRequest = function(direction, floor) {
 			console.log("OUT OF SERVICE");
 			return;
 		}
+
+        if (elevator.upstops.length === 0 && elevator.downstops.length === 0) {
+        	elevator.direction = Directions.STANDING;
+        }
+
 		var onTheWay = ((elevator.direction === Directions.UP && elevator.floor < floor) || (elevator.direction === Directions.DOWN && elevator.floor > floor) || elevator.direction === Directions.STANDING );
 
 		var sameDirection = direction === elevator.direction || elevator.direction === Directions.STANDING;
 
 		var distance = Math.abs(floor - elevator.floor);
 
-		if (onTheWay && sameDirection && (chosenindex === -1 || distance < Math.abs(floor - self[chosenindex].floor))) {
-			chosenindex = index;
+
+		var closfloor;
+		if (self[closestindex.direction] == Directions.UP)  {
+		  var up = self[closestindex].upstops;
+          closfloor = up[up.length=1];
+          closfloor = up[0]
+		} else {
+		  var down = self[closestindex].downstops;
+		  closfloor = down[down.length-1];
+		  closfloor = down[0]
 		}
 
-		if (distance < Math.abs(floor - self[closestindex].floor)) {
+/*
+		if (false && onTheWay && sameDirection && (chosenindex === -1 || distance < Math.abs(floor - self[chosenindex].floor))) {
+			chosenindex = index;
+		// } else  if (distance < Math.abs(floor - self[closestindex].floor)) {
+		} else  if (distance < Math.abs(floor - closfloor)) {
+			closestindex = index;
+		}
+*/
+		if (distance < Math.abs(floor - closfloor)) {
 			closestindex = index;
 		}
 	});
@@ -171,7 +234,8 @@ ElevatorBank.prototype.processRequest = function(direction, floor) {
 	console.log("closestindex:" + closestindex);
 	console.log("chosenindex:" + chosenindex);
 
-	var elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
+	// var elevatorindex = chosenindex !== -1 ? chosenindex : closestindex;
+	var elevatorindex = closestindex;
 
 	this[elevatorindex].addstop(direction, floor);
 

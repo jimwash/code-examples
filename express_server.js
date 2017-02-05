@@ -18,6 +18,14 @@ app.get('/promise', function(req, res) {
 
 app.get('/backbone', function(req, res) {
 	res.sendFile(__dirname + '/index3.html');
+});
+
+app.get('/stayloopt', function(req, res) {
+	res.sendFile(__dirname + '/index4.html');
+})
+
+app.get('/elevator', function(req, res) {
+	res.sendFile(__dirname + '/index5.html');
 })
 
 app.listen(3000, function() {

@@ -21,6 +21,16 @@ input[type="checkbox"] {
 	outline: none;
 }
 
+.shaft {
+	margin-left:10px;
+	border-style:solid;
+	border-width:1px;
+	border-color:red;
+	width:30px;
+	height: 100%;
+	float:left;
+}
+
 
 .hidden {
 	display: none;
