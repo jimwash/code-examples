@@ -44,7 +44,12 @@ app.get('/workstations', function(req, res) {
 });
 
 app.get('/workstationsstatus', function(req,res) {
-	var ret = app.stationcontroller.status();
+	var ret = {};
+
+    // check to make sure the controller has been created and orders are running
+    //if (typeof app.stationcontroller !== 'undefined') {
+	    ret = app.stationcontroller.status();
+    //}
 
     console.log("STATUS:"+ret);
     res.setHeader('Content-Type', 'application/json');
