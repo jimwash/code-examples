@@ -107,7 +107,7 @@ Elevator.prototype.makestop = function(direction, floor) {
 
 // Start the elevator operation, controller by calling addstop
 // the addstop will be call bu am outside source (elevator bank, elevator passenger)
-Elevator.prototype.simulate = function() {
+Elevator.prototype.simulate = function(dfd) {
 
 	var waittime = MOVINGTIME;
 	this.stopped = false;
@@ -170,25 +170,40 @@ Elevator.prototype.simulate = function() {
 	}
 
 	setTimeout(function() {
-		self.simulate();
+		self.simulate(dfd);
+		if (self.upstops.length == 0 && self.downstops.length == 0) {
+			dfd.resolve();
+		}
 	}, waittime);
+
+	return dfd.promise();
 };
 
 // Bank of Elevators, make it a class like thing to add operations on it
 // Maybe have it report out of service elevators
 function ElevatorBank() {
+	this.completedcnt = 0;
+	this.started = Date.now();
 }
 
 ElevatorBank.prototype = Object.create(Array.prototype);
-ElevatorBank.prototype.simulate = function() {
-	this.forEach(function(elevator, index) {
-		elevator.simulate();
-	});
+ElevatorBank.prototype.completedFunc = function() {
+	this.completedcnt++;
+	if (this.completedcnt == this.length) {
+		console.log("Ended:"+(Date.now() - this.started))
+	}
 };
-
-
-// Process a request to the elevator bank, this involves figuring out which
-// elevator to add the request too
+ElevatorBank.prototype.simulate = function() {
+	var self = this;
+    this.completedcnt = 0;
+    this.started = Date.now();
+	this.forEach(function(elevator, index) {
+		var mydef = $.Deferred();
+		elevator.simulate(mydef).done(function() {
+			self.completedFunc();
+		});
+	})
+};
 ElevatorBank.prototype.processRequest = function(direction, floor) {
 
 	console.log("Request: drection:"+direction+"  floor:"+floor);
