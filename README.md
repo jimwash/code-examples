@@ -38,7 +38,7 @@ generatorproduct
 
 workstations
 
-    under repair: greeting card manufacturing
+    greeting card manufacturing, workstations manufacturing floor
 
 
 coupon
