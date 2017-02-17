@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "babel": "^6.5.2",
     "backbone": "^1.1.2",
     "backbone.localstorage": "^1.1.16",
     "jquery": "^2.1.3",
@@ -9,5 +10,33 @@
     "todomvc-app-css": "^1.0.0",
     "todomvc-common": "^1.0.1",
     "underscore": "^1.7.0"
-  }
+  },
+  "devDependencies": {
+    "babel-cli": "^6.22.2",
+    "babel-browser": "^6.1.19",
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-env": "^1.1.8",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "scripts": {
+    "build": "babel src -d lib"
+  },
+  "name": "code-examples",
+  "description": "- these are mostly code refreshers   - I don't have the code used a previous companies (they don't like that)     these are refreshers, we structure the AGM code using backbone and require so the     project looked something like the backbone application for the express_server",
+  "version": "1.0.0",
+  "main": "express-server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimwash/code-examples.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jimwash/code-examples/issues"
+  },
+  "homepage": "https://github.com/jimwash/code-examples#readme"
 }

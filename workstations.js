@@ -221,25 +221,64 @@ StationsControl.prototype.status = function(order) {
 	ret.select_quantity = this.selects.queue.length;
 	ret.select_completed = this.selects.max - this.selects.queue.length;
 	console.log("selects:"+this.selects.queue.length);
+	if (this.selects.queue.length > 0) {
+		ret.select_cards_completed = 0;
+		ret.select_cards_quantity = 0;
+		for (var i=0;i<this.selects.queue.length;i++) {
+		    ret.select_cards_completed += this.selects.queue[0].completed;
+		    ret.select_cards_quantity += this.selects.queue[0].row.quantity;
+	    }
+	}
 
 	console.log("cuts:"+this.cuts.queue.length);
 	ret.cut_quantity = this.cuts.queue.length;
 	ret.cut_completed = this.cuts.max - this.cuts.queue.length;
+	if (this.cuts.queue.length > 0) {
+		ret.cut_cards_completed = 0;
+		ret.cut_cards_quantity = 0;
+		for (var i=0;i<this.cuts.queue.length;i++) {
+		    ret.cut_cards_completed += this.cuts.queue[0].completed;
+		    ret.cut_cards_quantity += this.cuts.queue[0].row.quantity;
+	    }
+	}
 
 	console.log("assembles:"+this.assembles.queue.length);
 	ret.assemble_quantity = this.assembles.queue.length;
 	ret.assemble_completed = this.assembles.max - this.assembles.queue.length;
+	if (this.assembles.queue.length > 0) {
+		ret.assemble_cards_completed = 0;
+		ret.assemble_cards_quantity = 0;
+		for (var i=0;i<this.assembles.queue.length;i++) {
+		    ret.assemble_cards_completed += this.assembles.queue[0].completed;
+		    ret.assemble_cards_quantity += this.assembles.queue[0].row.quantity;		
+	    }
+	}
 
 
 	console.log("glues:"+this.glues.queue.length);
 
 	ret.glue_quantity = this.glues.queue.length;
 	ret.glue_completed = this.glues.max - this.glues.queue.length;
-
+	if (this.glues.queue.length > 0) {
+		ret.glue_cards_completed = 0;
+		ret.glue_cards_quantity = 0;
+		for (var i=0;i<this.glues.queue.length;i++) {
+			ret.glue_cards_completed += this.glues.queue[0].completed;
+			ret.glue_cards_quantity += this.glues.queue[0].row.quantity;	
+		}		
+	}
 	
 	console.log("packandmails:"+this.packandmails.queue.length);
 	ret.packandmail_quantity = this.packandmails.queue.length;
 	ret.packandmail_completed = this.packandmails.max - this.packandmails.queue.length;
+	if (this.packandmails.queue.length > 0) {
+		ret.packandmail_cards_completed = 0;
+		ret.packandmail_cards_quantity = 0;
+		for (var i=0;i<this.packandmails.queue.length;i++) {		
+			ret.packandmail_cards_completed += this.packandmails.queue[0].completed;
+			ret.packandmail_cards_quantity += this.packandmails.queue[0].row.quantity;
+		}					
+	}
 
 	
     return ret;
