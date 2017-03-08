@@ -1,4 +1,5 @@
 LV = React.createFactory(LV);
+TB = React.createFactory(TB);
 
 var callback = function(id) {
 	console.log(id);
@@ -16,6 +17,10 @@ var callback = function(id) {
 		);
 
 	})
+}
+
+var toolbarcb = function(id) {
+
 }
 
 var msgchange = function() {
@@ -36,13 +41,27 @@ var loadMessages = function() {
 
 		LVobj = new LV({contacts:contacts,cb:callback})
 
+		TBobj = new TB({tbcb:toolbarcb});
+
+		var tbelement = document.getElementById('tool-bar');
+		ReactDOM.unmountComponentAtNode(tbelement)
+
+
+		ReactDOM.render(
+			TBobj,
+			tbelement
+		);
+
+
 		var element = document.getElementById('side-list');
 		ReactDOM.unmountComponentAtNode(element)
 
 		ReactDOM.render(
-			LVobj, 
+			LVobj,
 			element
 		);
+
+
 		//
 
 	});	
@@ -51,7 +70,7 @@ var loadMessages = function() {
 loadMessages();
 
 Editor = React.createFactory(Editor);
-ReactQuill = React.createFactory(ReactQuill);
+// ReactQuill = React.createFactory(ReactQuill);
 newEditor = new Editor({onchange: msgchange});
 
 ReactDOM.render(
