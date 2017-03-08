@@ -10,6 +10,32 @@
 	background-color: #f4f4f4;
 }
 
+.ltooli {
+	padding-right:50px;
+	padding-left:20px;
+}
+
+.rtooli {
+	padding-left:50px;
+	padding-right:20px;
+}
+
+.lefttable {
+	float: left;
+}
+
+.righttable {
+	float: right;
+}
+
+.looph1 {
+	padding-left:20px;
+}
+
+.toolbar {
+	background-color: #f9c7f8;
+}
+
 .loopliactive {
 	background-color: #ddffdd;
 }
