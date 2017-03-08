@@ -1,15 +1,15 @@
 /* global React */
 /* global ReactQuill */
-'use strict'
-//define(['jquery', 'underscore', 'react', 'reactdom', 'reactwidgets', 'd3'], function ($, _, React, ReactDom, RactWidgets, d3) {
-//	'use strict';
+'use strict';
 
-var dateTimePicker = ReactWidgets.DateTimePicker;
-// ReactQuill = React.createFactory(ReactQuill);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// class Editor extends React.Component {
+var DateTimePicker = ReactWidgets.DateTimePicker;
+
 var Editor = React.createClass({
-	getInitialState: function () {
+	displayName: 'Editor',
+
+	getInitialState: function getInitialState() {
 		return {
 			shownid: -1,
 			theme: 'snow',
@@ -20,183 +20,226 @@ var Editor = React.createClass({
 		};
 	},
 
-	setMessage: function(message) {
-		this.setState({ subject: message.subject, value: message.message, toemail: message.toemail, value0: message.schedule })
-        this.render();
-	},
-    
-	formatRange: function (range) {
-		return range
-			? [range.start, range.end].join(',')
-			: 'none';
+	setMessage: function setMessage(message) {
+		this.setState({ subject: message.subject, value: message.message, toemail: message.toemail, value0: message.schedule });
+		this.render();
 	},
 
-    toemail: '',
-    
-	onTextareaChange: function(event) {
-		var value = event.target.value;
-		this.setState({ value:value });
+	formatRange: function formatRange(range) {
+		return range ? [range.start, range.end].join(',') : 'none';
 	},
-	
-	onSubjectTextareaChange: function(event) {
+
+	toemail: '',
+
+	onTextareaChange: function onTextareaChange(event) {
+		var value = event.target.value;
+		this.setState({ value: value });
+	},
+
+	onSubjectTextareaChange: function onSubjectTextareaChange(event) {
 		var value = event.target.value;
 		this.setState({ subject: value });
 	},
-		
-	onEmailTextareaChange: function(event) {
+
+	onEmailTextareaChange: function onEmailTextareaChange(event) {
 		var value = event.target.value;
 		this.setState({ toemail: value });
 	},
-	
-	onEditorChange: function(value, delta, source) {
+
+	onEditorChange: function onEditorChange(value, delta, source) {
 		this.setState({
 			value: value,
-			events: [
-				'text-change('+this.state.value+' -> '+value+')'
-			].concat(this.state.events)
+			events: ['text-change(' + this.state.value + ' -> ' + value + ')'].concat(this.state.events)
 		});
 	},
 
-	onEditorChangeSelection: function(range, source) {
+	onEditorChangeSelection: function onEditorChangeSelection(range, source) {
 		this.setState({
 			selection: range,
-			events: [
-				'selection-change('+
-					this.formatRange(this.state.selection)
-				+' -> '+
-					this.formatRange(range)
-				+')'
-			].concat(this.state.events)
+			events: ['selection-change(' + this.formatRange(this.state.selection) + ' -> ' + this.formatRange(range) + ')'].concat(this.state.events)
 		});
 	},
 
-	onToggle: function() {
+	onToggle: function onToggle() {
 		this.setState({ enabled: !this.state.enabled });
 	},
 
-	onToggleReadOnly: function() {
+	onToggleReadOnly: function onToggleReadOnly() {
 		this.setState({ readOnly: !this.state.readOnly });
 	},
 
-	handleClick: function(elem) {
-	    console.log(this.state.value);
-        var msg = new Message(this.state.value,this.state.toemail,this.state.subject,this.state.value0);
-        var msgcollection = new Messages();
-        var self = this;
-        if (elem.currentTarget.textContent == "Insert") {
-	        msgcollection.insert(msg).then(function(data) {
-
-	        	console.log("DATA:"+data.id);
-	            self.state.msgid = data.id;
-	            console.log("SET:"+self.state.msgid)
-	            self.props.onchange();
-	        })
-        } else if (elem.currentTarget.textContent == "Update" ) {
-        	msg.id = this.state.id;
-	        msgcollection.update(msg).then(function(data) {
-
-	        	console.log("DATA:"+data.id);
-	            self.state.msgid = data.id;
-	            console.log("SET:"+self.state.msgid)
-	            self.props.onchange();
-	        })        	
-        }
-
+	handleClick: function handleClick(elem) {
+		console.log(this.state.value);
+		var msg = new Message(this.state.value, this.state.toemail, this.state.subject, this.state.value0);
+		var msgcollection = new Messages();
+		var self = this;
+		if (elem.currentTarget.textContent == "Insert") {
+			msgcollection.insert(msg).then(function (data) {
+				console.log("DATA:" + data.id);
+				self.state.msgid = data.id;
+				console.log("SET:" + self.state.msgid);
+				self.props.onchange();
+			});
+		} else if (elem.currentTarget.textContent == "Update") {
+			msg.id = this.state.id;
+			msgcollection.update(msg).then(function (data) {
+				console.log("DATA:" + data.id);
+				self.state.msgid = data.id;
+				console.log("SET:" + self.state.msgid);
+				self.props.onchange();
+			});
+		}
 	},
-    
-	handleSend: function() {
+
+	handleSend: function handleSend() {
 		console.log("Send");
-	    console.log(this.state.value);
+		console.log(this.state.value);
 		fetch('http://localhost:3010/mail', { method: "GET" });
 	},
-       
-    
-	render: function() {
-		var change = (name, value) => this.setState({
-	        ['value' + name]: value
-	    });
 
-	    if (this.props.data && this.props.data.id != this.state.id) {
-	    	this.state.value = this.props.data.message;
-	    	this.state.toemail = this.props.data.recipient;
-	    	this.state.subject = this.props.data.subject;
-	    	this.state.value0 = this.props.data.schedule;
-	    	this.state.id = this.props.data.id;
-		    this.setState({ shownid: this.props.data.id });
-	    }
+	render: function render() {
+		var _this = this;
 
-		return (
+		var change = function change(name, value) {
+			return _this.setState(_defineProperty({}, 'value' + name, value));
+		};
 
-    			React.DOM.div({	style: { display:'block', width:700, height:300 }, },
-				React.DOM.label({},"Loop Content"),
-				this.state.enabled && ReactQuill({
-					theme: this.state.theme,
-					value: this.state.value,
-					readOnly: this.state.readOnly,
-					onChange: this.onEditorChange,
-					placeholder: "What's on your mind?",
-					onChangeSelection: this.onEditorChangeSelection
-				}),
-               React.DOM.table({className: "MyClassName"}, 
-		        React.DOM.tbody(null, 
-		            React.DOM.tr({}, 
-		               React.DOM.td({style: {textAlign: 'right'}}, "Email Address:"),
-		               React.DOM.td({},                 
-		               	   React.DOM.textarea({
-							  style: { display:'block', width:200, height:30 },
-							  value: this.state.toemail,
-							  onChange: this.onEmailTextareaChange
-		                  }))
-		            ),
-		            React.DOM.tr({}, 
-		               React.DOM.td({style: {textAlign: 'right'}}, "Subject:"),
-		               React.DOM.td({}, 
-			                React.DOM.textarea({
-								style: { display:'block', width:200, height:30 },
-								value: this.state.subject,
-								onChange: this.onSubjectTextareaChange
-			                }))               	
-		            ),
-		            React.DOM.tr({}, 
-		               React.DOM.td({style: {textAlign: 'right'}}, "Delivery Schedule:"),
-		               React.DOM.td({}, 
-                            React.createElement(dateTimePicker,
-                            	{name: 'date', value: new Date(this.state.value0), onChange: change.bind(null,'0')})
+		if (this.props.data && this.props.data.id != this.state.id) {
+			this.state.value = this.props.data.message;
+			this.state.toemail = this.props.data.recipient;
+			this.state.subject = this.props.data.subject;
+			this.state.value0 = this.props.data.schedule;
+			this.state.id = this.props.data.id;
+			this.setState({ shownid: this.props.data.id });
+		}
 
-			            )               	
-		            )
-		        )),
-                React.DOM.hr(),
-                React.DOM.button( { className: "actionbutton", onClick: this.handleClick }, "Cancel" ),
-				React.DOM.button( { className: "actionbutton", onClick: this.handleClick }, "Update" ),
-				React.DOM.button( { className: "actionbutton", onClick: this.handleClick }, "Insert" ),
-				React.DOM.button( { className: "actionbutton", onClick: this.handleSend }, "Send" )
+		var sty = {
+			display: 'block',
+			width: 700,
+			height: 260
+		};
 
-			)
-	    );
-	},
-    
-	renderToolbar: function() {
-		var state = this.state;
-		var enabled = state.enabled;
-		var readOnly = state.readOnly;
-		var selection = this.formatRange(state.selection);
-		return (
-			React.DOM.div({},
-				React.DOM.button({
-					onClick: this.onToggle },
-					enabled? 'Disable' : 'Enable'
-				),
-				React.DOM.button({
-					onClick: this.onToggleReadOnly },
-					'Set ' + (readOnly? 'read/Write' : 'read-only')
-				),
-				React.DOM.button({
-					disabled: true },
-					'Selection: ('+selection+')'
+		var sty2 = {
+			textAllign: 'right'
+		};
+
+		return React.createElement(
+			'div',
+			{ style: sty },
+			React.createElement(ReactQuill, { theme: this.state.theme,
+				value: this.state.value,
+				readOnly: this.state.readOnly,
+				onChange: this.onEditorChange,
+				placeholder: 'Whats on your mind?',
+				onChangeSelection: this.onEditorChangeSelection }),
+			React.createElement(
+				'table',
+				{ className: 'myClassname' },
+				React.createElement(
+					'tbody',
+					null,
+					React.createElement(
+						'tr',
+						null,
+						React.createElement(
+							'td',
+							{ style: { textAlign: 'right' } },
+							'Email Address'
+						),
+						React.createElement(
+							'td',
+							null,
+							React.createElement(
+								'textarea',
+								{ style: { display: 'block', width: 200, height: 30 } },
+								this.state.toemail
+							)
+						)
+					),
+					React.createElement(
+						'tr',
+						null,
+						React.createElement(
+							'td',
+							{ style: { textAlign: 'right' } },
+							'Subject'
+						),
+						React.createElement(
+							'td',
+							null,
+							React.createElement(
+								'textarea',
+								{ style: { display: 'block', width: 200, height: 30 } },
+								this.state.subject
+							)
+						)
+					),
+					React.createElement(
+						'tr',
+						null,
+						React.createElement(
+							'td',
+							{ style: { textAlign: 'right' } },
+							'Delivery Schedule:'
+						),
+						React.createElement(
+							'td',
+							null,
+							React.createElement(DateTimePicker, { name: 'date', value: new Date(this.state.value0), onChange: change.bind(null, '0') })
+						)
+					)
 				)
+			),
+			React.createElement('hr', null),
+			React.createElement(
+				'button',
+				{ className: 'actionbutton', onClick: this.handleClick },
+				'Cancel'
+			),
+			React.createElement(
+				'button',
+				{ className: 'actionbutton', onClick: this.handleClick },
+				'Update'
+			),
+			React.createElement(
+				'button',
+				{ className: 'actionbutton', onClick: this.handleClick },
+				'Insert'
+			),
+			React.createElement(
+				'button',
+				{ className: 'actionbutton', onClick: this.handleClick },
+				'Send'
 			)
 		);
 	},
 
+	renderToolbar: function renderToolbar() {
+		var state = this.state;
+		var enabled = state.enabled;
+		var readOnly = state.readOnly;
+		var selection = this.formatRange(state.selection);
+		return React.createElement(
+			'div',
+			null,
+			React.createElement(
+				'button',
+				{ onClick: this.onToggle },
+				enabled ? 'Disable' : 'Enable'
+			),
+			React.createElement(
+				'button',
+				{ onClick: this.onToggleReadonly },
+				'Set ' + (readOnly ? 'read/write' : 'read-only')
+			),
+			React.createElement(
+				'button',
+				{ disabled: 'true' },
+				'Selection: (' + selection + ')',
+				'>'
+			)
+		);
+	}
+
 });
+

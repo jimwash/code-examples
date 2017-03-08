@@ -1,0 +1,43 @@
+class TB extends React.Component {
+
+    // save contacts
+	constructor(contacts) {
+		super();
+		this.config = contacts;
+	};
+
+    // an element in the list was clicked
+	onclick(elem) {
+	  callback(elem.target.id)
+	};
+
+    // render an individual element
+	lbarElements() { 
+	  var self = this;
+	  return (  ['safe house','loops']
+	  .map(function(item) {
+	  	var clsname = "ltooli";
+	    return React.createElement('td', {onClick: self.onclick, className: clsname},
+	      React.createElement('span', {},item)
+	    )
+	}))};
+
+	rbarElements() { 
+	  var self = this;
+	  return (  ['about us','contact']
+	  .map(function(item) {
+	  	var clsname = "rtooli";
+	    return React.createElement('td', {onClick: self.onclick, className: clsname},
+	      React.createElement('span', {},item)
+	    )
+	}))};
+
+    // render the list
+	render() {
+		return (
+				React.DOM.div({ className: 'toolbar'},
+					[ React.DOM.table({className:'leftTable'}, React.DOM.tr({}, this.lbarElements())), React.DOM.table({className:'righttable'}, React.DOM.tr({}, this.rbarElements()))	]
+				)
+		);
+	}
+};
